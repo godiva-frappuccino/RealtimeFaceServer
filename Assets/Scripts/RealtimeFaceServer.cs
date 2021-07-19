@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 using MiniJSON;
+using System.Linq;
 
 public class RealtimeFaceServer : MonoBehaviour
 {
@@ -43,17 +44,17 @@ public class RealtimeFaceServer : MonoBehaviour
         //ここでメッセージの処理
         Debug.Log("I Receive " + message);
         JsonNode jsonNode = JsonNode.Parse(message);
-        //眼球の左右の値を取得
-        float eyeRLRotation = float.Parse(jsonNode["Eye"].Get<string>());
-        UpdatePose(eyeRLRotation);
+        //眼球のxyの値を取得
+        float eyeRotationX = (float)(jsonNode["EyeX"].Get<double>());
+        float eyeRotationY = (float)(jsonNode["EyeY"].Get<double>());
+        UpdatePose(eyeRotationX, eyeRotationY);
     }
 
 
-
-    public void UpdatePose(float eyeRLRotation)
+    public void UpdatePose(float eyeRotationX, float eyeRotationY)
     {
-        Debug.Log("Value:" + eyeRLRotation);
-        eyeOffset = new Vector2(eyeRLRotation * 0.2f, 0);
+        Debug.Log("Value:" + eyeRotationX + "," + eyeRotationY);
+        eyeOffset = new Vector2(eyeRotationX * 0.2f, eyeRotationY * 0.2f);
         Debug.Log("Change:" + eyeOffset);
         eyeObjL.material.SetTextureOffset("_MainTex", eyeOffset);
         eyeObjR.material.SetTextureOffset("_MainTex", eyeOffset);
